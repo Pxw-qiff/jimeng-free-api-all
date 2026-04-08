@@ -112,7 +112,7 @@ export interface TokenWithProxy {
 }
 
 export function parseRegionFromToken(refreshToken: string): RegionInfo {
-  const token = refreshToken.toLowerCase();
+  const token = refreshToken.toLowerCase().trim();
   const isUS = token.startsWith("us-");
   // 尝试匹配 2 字母国际区域前缀 (xx-)
   const prefixMatch = token.match(/^([a-z]{2})-/);
@@ -567,13 +567,8 @@ export function checkResult(result: AxiosResponse) {
   throw new APIException(EX.API_REQUEST_FAILED, `[请求jimeng失败]: ${errmsg}`);
 }
 
-/**
- * Token切分
- *
- * @param authorization 认证字符串
- */
 export function tokenSplit(authorization: string) {
-  return authorization.replace("Bearer ", "").split(",");
+  return authorization.replace(/Bearer\s+/ig, "").split(",").map(t => t.trim());
 }
 
 export async function acquireToken(refreshToken: string) {
