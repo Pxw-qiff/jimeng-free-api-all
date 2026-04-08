@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  jimeng-free-api:
+    image: ghcr.io/pxw-qiff/jimeng-free-api-all:latest
+    container_name: jimeng-free-api-all
+    ports:
+      - "8000:8000"
+    environment:
+      - TZ=Asia/Shanghai
+    restart: unless-stopped
+    init: true
