@@ -2909,7 +2909,10 @@ async function _generateInternationalSeedanceVideoWithHistoryId(
   refreshToken: string,
   onHistoryId?: (historyId: string) => void
 ): Promise<{ url: string; historyId: string }> {
+  const tokenPrefix = _.isString(refreshToken) ? refreshToken.split('-')[0].toLowerCase() : 'invalid';
+  logger.debug(`_generateInternationalSeedanceVideoWithHistoryId 收到 token 前缀: ${tokenPrefix}, 完整token前20字符: ${String(refreshToken).slice(0, 20)}`);
   const regionInfo = parseRegionFromToken(refreshToken);
+  logger.debug(`token 解析结果: region=${regionInfo.regionCode}, isInternational=${regionInfo.isInternational}, isCN=${regionInfo.isCN}, isUS=${regionInfo.isUS}`);
   if (regionInfo.isCN) throw new APIException(EX.API_REQUEST_FAILED, "国际 Seedance 接口仅接受国际 token");
   if (regionInfo.isUS) throw new APIException(EX.API_REQUEST_FAILED, "US token 暂不支持国际 Seedance 2.0 / 2.0-fast");
 
