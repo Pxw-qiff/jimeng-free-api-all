@@ -3127,7 +3127,7 @@ export function submitInternationalAsyncVideoTask(
         logger.warn(`国际异步任务后台轮询超时，保持 processing 状态: ${taskId}, historyId=${task.historyId}`);
       } else {
         task.status = "failed";
-        task.error = error instanceof APIException ? `[${error.code}] ${error.message}` : errorMsg || "未知错误";
+        task.error = error instanceof APIException ? `[${error.errcode}] ${error.errmsg}` : errorMsg || "未知错误";
         task.updatedAt = Date.now();
         saveTaskToFile(task);
         logger.error(`国际异步任务失败: ${taskId}, 错误: ${task.error}`);
@@ -3612,7 +3612,7 @@ function restartPollingForTask(task: AsyncTask): void {
       } else {
         task.status = "failed";
         task.error = error instanceof APIException
-          ? `[${error.code}] ${error.message}`
+          ? `[${error.errcode}] ${error.errmsg}`
           : errorMsg || "未知错误";
         task.updatedAt = Date.now();
         saveTaskToFile(task);
@@ -4072,7 +4072,7 @@ export function submitAsyncVideoTask(
       } else {
         task.status = "failed";
         task.error = error instanceof APIException
-          ? `[${error.code}] ${error.message}`
+          ? `[${error.errcode}] ${error.errmsg}`
           : errorMsg || "未知错误";
         task.updatedAt = Date.now();
         saveTaskToFile(task);
