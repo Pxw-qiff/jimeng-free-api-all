@@ -4096,7 +4096,7 @@ export function submitAsyncVideoTask(
 
 /**
  * 查询异步视频生成任务结果
- * - 如果后台轮询仍在进行中（有 _promise），阻塞等待完成
+ * - 直接返回当前任务状态，不阻塞等待（真正的非阻塞轮询模式）
  * - 如果后台轮询已停止但任务仍为 processing（超时场景），做 on-demand 即时查询
  */
 export async function queryAsyncVideoTask(
@@ -4131,15 +4131,14 @@ export async function queryAsyncVideoTask(
     return task;
   }
 
-  // processing 状态的任务
+  // processing 状态：
+  // - 后台轮询进行中（有 _promise）→ 直接返回 processing，不阻塞
+  // - 后台轮询已停止（超时/重启，无 _promise）→ 做一次 on-demand 即时查询
   if (task.status === "processing") {
-    // 如果后台轮询仍在进行中（有活跃的 Promise），阻塞等待
     if (task._promise) {
-      logger.info(`查询接口等待后台轮询完成: ${taskId}`);
-      await task._promise;
-      if (task.status === "succeeded" || task.status === "failed") {
-        return task;
-      }
+      // 后台轮询仍在进行中，直接返回 processing 状态，让客户端自行轮询
+      logger.info(`查询接口：后台轮询进行中，直接返回 processing 状态: ${taskId}`);
+      return task;
     }
 
     // 后台轮询已停止（超时或重启后的 processing 任务），做 on-demand 即时查询
