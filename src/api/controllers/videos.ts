@@ -3138,6 +3138,8 @@ export function submitInternationalAsyncVideoTask(
     } finally {
       activeAsyncCount--;
       if (task._resolve) task._resolve();
+      task._promise = undefined;
+      task._resolve = undefined;
     }
   })();
 
@@ -3624,6 +3626,8 @@ function restartPollingForTask(task: AsyncTask): void {
     } finally {
       activeAsyncCount--;
       if (task._resolve) task._resolve();
+      task._promise = undefined;
+      task._resolve = undefined;
       clearTaskRuntimeWaiters(task);
     }
   })();
